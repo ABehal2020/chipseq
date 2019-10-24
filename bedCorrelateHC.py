@@ -73,30 +73,45 @@ def sequentialJaccardBed():
 # multi-threaded
 def multithreadedJaccardBed(*bedSortedPairs):
     # bedSortedPairs = jaccardBed()
-    jaccardScores = []
+    jaccardScores = dict()
     errorBedSortedPairs = []
     try:
         file1 = BedTool(bedSortedPairs[0][0])
         file2 = BedTool(bedSortedPairs[0][1])
         jaccardResults = BedTool.jaccard(file1, file2)
         jaccardScore = jaccardResults["jaccard"]
-        jaccardScores.append(jaccardScore)
+        scoredPair = (file1, file2)
+        jaccardScores[str(scoredPair)] = jaccardScore
     except Exception as error:
         errorBedSortedPair = [file1, file2]
         errorBedSortedPairs.append(errorBedSortedPair)
-
-    print(jaccardScores)
-    print(errorBedSortedPairs)
+        print(error)
 
     return jaccardScores, errorBedSortedPairs
 
 # calling multi-threaded jaccard calculation function
 def fetchScoreAndErrors():
     # multi-threaded call
+    jaccardScores = dict()
+    errorBedSortedPairs = []
     bedSortedPairs = jaccardBed()
     numProcs = len(bedSortedPairs)
+
     with Pool(numProcs) as p:
-        p.map(multithreadedJaccardBed, bedSortedPairs)
+        scoreAndErrors = p.map(multithreadedJaccardBed, bedSortedPairs)
+
+    for score, error in scoreAndErrors:
+        print(score)
+        # jaccardScores.append(score)
+        jaccardScores.update(score)
+        if len(error) != 0:
+            errorBedSortedPairs.append(error)
+
+    print("scores")
+    print(jaccardScores)
+    print("errors")
+    print(errorBedSortedPairs)
+
 
 def main():
     # not multi-threaded call
