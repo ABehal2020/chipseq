@@ -1,1 +1,4 @@
+Assuming you already have a conda environment with the necessary dependencies (https://daler.github.io/pybedtools/main.html), you can run the python scripts in your activated conda environment.
+Example:
+python bedCorrelateGeneral2.py 'https://www.encodeproject.org/search/?searchTerm=H3K4ME3&type=Experiment&replication_type=isogenic&assembly=GRCh38&award.rfa=ENCODE4&format=json'
 
